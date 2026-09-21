@@ -147,6 +147,13 @@
     text-align:center; font-size:12px; color: var(--cream-dim);
     padding: 6px 0 14px 0;
   }
+  .nav-link {
+    font-size: 12px; color: var(--cream-dim); text-decoration:none;
+    border: 1px solid var(--line); border-radius:999px;
+    padding: 5px 12px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:5px;
+  }
+  .nav-link:hover { border-color: var(--terracotta); color: var(--cream); }
 </style>
 </head>
 <body>
@@ -155,6 +162,9 @@
   <div class="brand-row">
     <div class="brand">ANDIAMO</div>
     <div class="brand-tag">Server Companion</div>
+  </div>
+  <div style="display:flex; justify-content:flex-end; margin:-4px 0 10px 0;">
+    <a class="nav-link" href="andiamo-checklist.html">Open/Close Checklist &#8594;</a>
   </div>
   <div class="pills">
     <button class="pill active" data-filter="all">All</button>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andiamo Fenton — Opening/Closing Checklist</title>
+<style>
+  :root{
+    --navy:#1f3a5f;
+    --navy-dark:#152a45;
+    --gold:#b08d57;
+    --bg:#f6f4ef;
+    --card:#ffffff;
+    --text:#26313f;
+    --muted:#6b7480;
+    --border:#e3ddd0;
+    --done-bg:#eef6ee;
+    --done-border:#8fbf8f;
+    --danger:#b3452f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:60px;
+  }
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+    color:#fff;
+    padding:20px 16px 16px;
+    position:sticky;
+    top:0;
+    z-index:10;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  header h1{
+    margin:0;
+    font-size:1.25rem;
+    letter-spacing:.3px;
+  }
+  header .sub{
+    color:var(--gold);
+    font-size:.85rem;
+    margin-top:2px;
+    font-weight:600;
+  }
+  .shift-toggle{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+  }
+  .shift-toggle button{
+    flex:1;
+    padding:10px;
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    border-radius:8px;
+    font-size:.95rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .shift-toggle button.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:var(--navy-dark);
+  }
+  .nav-link{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:.72rem;
+    color:rgba(255,255,255,.75);
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.3);
+    border-radius:999px;
+    padding:4px 10px;
+    margin-top:10px;
+  }
+  .nav-link:hover{ color:#fff; border-color:var(--gold); }
+  .meta-bar{
+    max-width:640px;
+    margin:14px auto 0;
+    padding:0 16px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .meta-bar input{
+    flex:1;
+    min-width:140px;
+    padding:9px 10px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    font-size:.9rem;
+  }
+  .progress-wrap{
+    max-width:640px;
+    margin:14px auto 0;
+    padding:0 16px;
+  }
+  .progress-track{
+    background:#e7e2d6;
+    border-radius:999px;
+    height:10px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--gold),#c9a86c);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-size:.8rem;
+    color:var(--muted);
+    margin-top:4px;
+    display:flex;
+    justify-content:space-between;
+  }
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:16px;
+  }
+  .station{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .station-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 14px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .station-header h2{
+    margin:0;
+    font-size:.98rem;
+    color:var(--navy);
+  }
+  .station-count{
+    font-size:.78rem;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .chevron{
+    transition:transform .2s ease;
+    color:var(--gold);
+    font-size:.85rem;
+    margin-left:8px;
+  }
+  .station.collapsed .chevron{transform:rotate(-90deg);}
+  .station-body{
+    padding:0 14px 12px;
+  }
+  .station.collapsed .station-body{display:none;}
+  label.task{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:9px 4px;
+    border-radius:8px;
+    font-size:.92rem;
+    line-height:1.35;
+    cursor:pointer;
+    border-bottom:1px solid #f1eee6;
+  }
+  label.task:last-child{border-bottom:none;}
+  label.task input{
+    margin-top:2px;
+    width:19px;
+    height:19px;
+    accent-color:var(--navy);
+    flex-shrink:0;
+  }
+  label.task.done{
+    background:var(--done-bg);
+  }
+  label.task.done span.txt{
+    text-decoration:line-through;
+    color:#5c6b5c;
+  }
+  .task-time{
+    display:block;
+    font-size:.72rem;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .signoff{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-top:6px;
+  }
+  .signoff h2{
+    font-size:1rem;
+    margin:0 0 10px;
+    color:var(--navy);
+  }
+  .signoff label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:.92rem;
+    padding:8px 0;
+  }
+  .signoff input[type=checkbox]{
+    width:19px;height:19px;accent-color:var(--gold);
+  }
+  .reset-row{
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+  }
+  .reset-row button{
+    background:none;
+    border:1px solid var(--danger);
+    color:var(--danger);
+    padding:9px 16px;
+    border-radius:8px;
+    font-size:.85rem;
+    cursor:pointer;
+  }
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.75rem;
+    padding:18px 16px 6px;
+  }
+  .toast{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--navy-dark);
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:.85rem;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+    z-index:50;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Andiamo Fenton</h1>
+  <div class="sub">Opening / Closing Checklist</div>
+  <a class="nav-link" href="Andiamo_Server_App.html">&#8592; Server Companion</a>
+  <div class="shift-toggle">
+    <button id="btnOpen" class="active">Opening</button>
+    <button id="btnClose">Closing</button>
+  </div>
+</header>
+
+<div class="meta-bar">
+  <input type="text" id="serverName" placeholder="Your name / initials">
+  <input type="text" id="stationAssigned" placeholder="Station # (optional)">
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label"><span id="progressText">0 of 0 complete</span><span id="dateLabel"></span></div>
+</div>
+
+<main id="stationList"></main>
+
+<main style="padding-top:0;">
+  <div class="signoff">
+    <h2>Sign-off</h2>
+    <label><input type="checkbox" id="serverSignoff"> I completed my assigned side work</label>
+    <label><input type="checkbox" id="managerSignoff"> Manager verified (final walk)</label>
+  </div>
+  <div class="reset-row">
+    <button id="resetBtn">Reset today's checklist</button>
+  </div>
+</main>
+
+<footer>Checklist resets automatically each day. Data is stored on this device only.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  opening: [
+    { station: "Coffee Station", tasks: [
+      "Brew 2 pots regular coffee, 1 pot decaf",
+      "Fill coffee beans — grinder and cappuccino machine",
+      "Prep cappuccino machine (water, empty tray, power on)",
+      "Fill 2–3 ice pitchers, place at bar station",
+      "Stock sugar caddies in order (Sweet N' Low, Sugar, Equal, Splenda)",
+      "Stock cups, creamers, hot tea pots, napkins, B&B plates, tea bags",
+      "Sanitizer/buckets on bottom shelf only (health code)"
+    ]},
+    { station: "Expo Station", tasks: [
+      "Fill 2 ice containers for condiments",
+      "Fill squeeze bottles (ketchup, mustard)",
+      "Fill aggmoglio 8-pan + spoon, nest in ice",
+      "Cut 3–6 lemons (per night), place over 2nd ice container",
+      "Fill 3–6 parmesan half-moon bowls",
+      "Fill white chillers half full with soup pasta + spoon",
+      "Confirm labeled 7-day backups are in reach-in cooler"
+    ]},
+    { station: "Trays", tasks: [
+      "Gather trays restaurant-wide, return to storage",
+      "Wipe down dirtied trays from prior shift",
+      "Line 10+ large trays with black linen"
+    ]},
+    { station: "To-Go / Silverware", tasks: [
+      "Stock cups, lids, linens, carry-out/soup containers, bags, kids' cups, straws",
+      "Polish spoons, steak knives, spatulas; store properly"
+    ]},
+    { station: "Reach-In Cooler / Dressings", tasks: [
+      "Fill dressing pans to half-way mark (House backup nightly; never bleu cheese)",
+      "Strip labels off old lids, run through dish tank",
+      "Stock parmesan, butter, chocolate syrup, milk, half-and-half",
+      "Fill oil/vinegar bottles, wipe down",
+      "Stock B&B plates, napkins, ramekins",
+      "Wipe whole area with sanitizer"
+    ]},
+    { station: "Server Hallway", tasks: [
+      "Roll out hallway rugs (replace if wet)",
+      "Fill pepper grinders",
+      "Stock Andiamo-label napkins",
+      "Start fresh sanitizer bucket if needed"
+    ]},
+    { station: "Bar / Glasses", tasks: [
+      "Stock napkins, straws, sword straws",
+      "Stock and polish all glassware"
+    ]},
+    { station: "Bread & Bucket", tasks: [
+      "Clean and sanitize all buckets (never in the sink dirty — health code)",
+      "Cut brown paper triangles, store on bread warmer",
+      "Send cutting board through dish tank, wipe counter",
+      "Stock breadsticks if needed",
+      "Fill 8-pan of Salsa Verde if none made",
+      "Fill and wipe oils, store corked in clean flat pan"
+    ]},
+    { station: "Back Wait Station", tasks: [
+      "Brew 1 pot regular coffee, 1 pot decaf",
+      "Stock iced tea + water pitchers, lemons, limes, cups, plates, napkins, pint glasses, tea",
+      "Fri/Sat or parties: stock chilled cream",
+      "Lay down rug in front of pop machine"
+    ]}
+  ],
+  closing: [
+    { station: "Coffee Station", tasks: [
+      "Clean all shelves (above, below, behind, under)",
+      "Refill coffee beans in both grinders",
+      "Clean cappuccino machine (empty tray, cleaner, water, wipe)",
+      "Wipe down condiments (hot sauces, honey, sugar caddies)",
+      "Monday: empty, dish-tank, refill sugar caddies",
+      "Saran wrap and store leftover iced tea",
+      "Restock napkins, plates, cups, creamers, tea"
+    ]},
+    { station: "Expo Station", tasks: [
+      "Clean under heat lamp, main shelf, shelves below",
+      "Wipe names off pager board",
+      "Flip/fill/wrap all condiments — label & date (7-day method)",
+      "Store condiments in reach-in cooler, organized",
+      "Wipe down soup containers",
+      "Consolidate parmesan; send empties through dish tank",
+      "Clear trash including old tickets"
+    ]},
+    { station: "Trays", tasks: [
+      "Clean and dry ALL trays at back sink",
+      "Store upside down, staggered — never wet",
+      "Split large/small trays if working with a partner"
+    ]},
+    { station: "To-Go / Silverware", tasks: [
+      "Restock cups, lids, linens, containers, bags, kids' cups, straws",
+      "Clear all 3 shelves, wipe with sanitizer",
+      "Re-organize shelves",
+      "Send silverware containers through dish tank",
+      "Polish and put away utensils"
+    ]},
+    { station: "Reach-In Cooler / Dressings", tasks: [
+      "Flip into clean ¼ pans, scrape with spatula",
+      "Refill dressings to half-way mark",
+      "Lid, label, date everything (7-day method)",
+      "Fill and wipe oil/vinegar bottles",
+      "Clear overstock — only milk, butter/parmesan (wrapped), syrup, cream, expo condiments stay overnight",
+      "Stock plates, napkins, ramekins"
+    ]},
+    { station: "Server Hallway", tasks: [
+      "Sweep hallway and rugs; roll and stack rugs",
+      "Sanitize highchairs, boosters, tray jacks, computer station, check presenters",
+      "Collect and fill all pepper grinders",
+      "Stock napkins",
+      "Water pitchers through dish tank (leave 1 hallway, 1 bar)",
+      "Empty trash"
+    ]},
+    { station: "Bar / Glasses", tasks: [
+      "Stock napkins, straws, sword straws",
+      "Glassware fully stocked and polished",
+      "Wipe/sanitize entire service bar area",
+      "Empty trash",
+      "Sweep around bar and rug"
+    ]},
+    { station: "Bread & Bucket", tasks: [
+      "All buckets sanitized, dried, put away",
+      "Cut more paper triangles if low",
+      "Cutting board + knife through dish tank",
+      "Wipe counter down to soup containers (move items to reach under)",
+      "Fill/wipe oils, store corked in clean flat pan",
+      "Flip Salsa Verde into clean 8-pan, wrap, label, date",
+      "Stock breadsticks"
+    ]},
+    { station: "Back Wait Station", tasks: [
+      "Dump/rinse coffee pots — only 2 stay overnight",
+      "Saran wrap iced tea pitcher, store in kitchen",
+      "Combine good lemons/limes with bar stock; toss dried ones",
+      "Clean sink and pop gasket",
+      "Clear/organize computer cart",
+      "Stock napkins, printer paper, cups, glasses, plates",
+      "Clean coffee machine, fill grinder to top",
+      "Sweep floor and rug; roll rug",
+      "Remove all but 3 tray jacks + dirty dishes/trays",
+      "Wipe counter with sanitizer (move machines to reach under)"
+    ]}
+  ]
+};
+
+const todayKey = () => new Date().toISOString().slice(0,10);
+const storageKey = () => `andiamo-checklist-${mode}-${todayKey()}`;
+const metaKey = () => `andiamo-checklist-meta-${todayKey()}`;
+
+let mode = "opening";
+
+function loadChecked(){
+  try{
+    return JSON.parse(localStorage.getItem(storageKey()) || "{}");
+  }catch(e){ return {}; }
+}
+function saveChecked(state){
+  try{ localStorage.setItem(storageKey(), JSON.stringify(state)); }catch(e){}
+}
+function loadMeta(){
+  try{ return JSON.parse(localStorage.getItem(metaKey()) || "{}"); }catch(e){ return {}; }
+}
+function saveMeta(m){
+  try{ localStorage.setItem(metaKey(), JSON.stringify(m)); }catch(e){}
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+function render(){
+  const list = document.getElementById('stationList');
+  list.innerHTML = "";
+  const checked = loadChecked();
+  const stations = DATA[mode];
+
+  stations.forEach((st, sIdx) => {
+    const div = document.createElement('div');
+    div.className = "station";
+    const doneCount = st.tasks.filter((_,i)=>checked[`${sIdx}-${i}`]?.done).length;
+
+    const headerEl = document.createElement('div');
+    headerEl.className = "station-header";
+    headerEl.innerHTML = `<h2>${st.station}</h2><div style="display:flex;align-items:center;"><span class="station-count">${doneCount}/${st.tasks.length}</span><span class="chevron">▾</span></div>`;
+    headerEl.addEventListener('click', ()=>{
+      div.classList.toggle('collapsed');
+    });
+
+    const body = document.createElement('div');
+    body.className = "station-body";
+
+    st.tasks.forEach((task, tIdx) => {
+      const key = `${sIdx}-${tIdx}`;
+      const entry = checked[key] || {};
+      const lbl = document.createElement('label');
+      lbl.className = "task" + (entry.done ? " done" : "");
+      lbl.innerHTML = `
+        <input type="checkbox" ${entry.done ? "checked" : ""}>
+        <span>
+          <span class="txt">${task}</span>
+          ${entry.done && entry.time ? `<span class="task-time">✓ ${entry.time}</span>` : ""}
+        </span>
+      `;
+      const cb = lbl.querySelector('input');
+      cb.addEventListener('change', () => {
+        const state = loadChecked();
+        if(cb.checked){
+          const now = new Date();
+          state[key] = { done:true, time: now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) };
+          lbl.classList.add('done');
+        } else {
+          state[key] = { done:false };
+          lbl.classList.remove('done');
+        }
+        saveChecked(state);
+        updateProgress();
+        refreshStationCount(headerEl, st, sIdx);
+      });
+      body.appendChild(lbl);
+    });
+
+    div.appendChild(headerEl);
+    div.appendChild(body);
+    list.appendChild(div);
+  });
+
+  updateProgress();
+  document.getElementById('dateLabel').textContent = new Date().toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+}
+
+function refreshStationCount(headerEl, st, sIdx){
+  const checked = loadChecked();
+  const doneCount = st.tasks.filter((_,i)=>checked[`${sIdx}-${i}`]?.done).length;
+  headerEl.querySelector('.station-count').textContent = `${doneCount}/${st.tasks.length}`;
+}
+
+function updateProgress(){
+  const checked = loadChecked();
+  const stations = DATA[mode];
+  let total = 0, done = 0;
+  stations.forEach((st,sIdx)=>{
+    st.tasks.forEach((_,tIdx)=>{
+      total++;
+      if(checked[`${sIdx}-${tIdx}`]?.done) done++;
+    });
+  });
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + "%";
+  document.getElementById('progressText').textContent = `${done} of ${total} complete`;
+}
+
+function setMode(newMode){
+  mode = newMode;
+  document.getElementById('btnOpen').classList.toggle('active', mode === 'opening');
+  document.getElementById('btnClose').classList.toggle('active', mode === 'closing');
+  render();
+}
+
+document.getElementById('btnOpen').addEventListener('click', ()=>setMode('opening'));
+document.getElementById('btnClose').addEventListener('click', ()=>setMode('closing'));
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm("Reset today's checklist? This clears all checked items for both Opening and Closing.")){
+    localStorage.removeItem(`andiamo-checklist-opening-${todayKey()}`);
+    localStorage.removeItem(`andiamo-checklist-closing-${todayKey()}`);
+    localStorage.removeItem(metaKey());
+    document.getElementById('serverName').value = "";
+    document.getElementById('stationAssigned').value = "";
+    document.getElementById('serverSignoff').checked = false;
+    document.getElementById('managerSignoff').checked = false;
+    render();
+    showToast("Checklist reset");
+  }
+});
+
+// meta fields (name, station, signoffs) persist per day
+const meta = loadMeta();
+document.getElementById('serverName').value = meta.name || "";
+document.getElementById('stationAssigned').value = meta.station || "";
+document.getElementById('serverSignoff').checked = !!meta.serverSignoff;
+document.getElementById('managerSignoff').checked = !!meta.managerSignoff;
+
+function persistMeta(){
+  saveMeta({
+    name: document.getElementById('serverName').value,
+    station: document.getElementById('stationAssigned').value,
+    serverSignoff: document.getElementById('serverSignoff').checked,
+    managerSignoff: document.getElementById('managerSignoff').checked
+  });
+}
+['serverName','stationAssigned'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', persistMeta);
+});
+['serverSignoff','managerSignoff'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', ()=>{
+    persistMeta();
+    showToast(document.getElementById(id).checked ? "Signed off" : "Sign-off removed");
+  });
+});
+
+render();
+</script>
+</body>
+</html>
