@@ -1,2 +1,2 @@
 # learning.github.io
-Edson is always learning and exploring technology
+Andiamo Project - Edson is working and exploring... coming back soon. 
